@@ -1,2 +1,3 @@
 # The .gitignore for confedential/unneeded files from the GitHub
 .env
+.gitkeep
