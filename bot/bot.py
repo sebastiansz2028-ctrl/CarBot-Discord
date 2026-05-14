@@ -1,15 +1,14 @@
 #Imports
 import os
 import discord
-# noinspection PyUnresolvedReferences
 import dotenv
 from dotenv import load_dotenv
-# noinspection PyUnresolvedReferences
 from discord.ext import commands
 load_dotenv()
 
 
 #Variables
+
 
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.all()
@@ -28,6 +27,7 @@ class CarBot(commands.Bot):
 
 
 bot = CarBot(command_prefix="CB!", intents=intents)
+
 #Commands
 
 
@@ -37,11 +37,16 @@ async def ping(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="profile", description="Check out a discord profile!")
-@bot.tree.command.choices(user=discord.Member)
-async def profile_checker(interaction: discord.Interaction):
+async def profile_checker(interaction: discord.Interaction, user: discord.Member):
+    embed_profile = discord.Embed()
     await interaction.response.defer(ephemeral=False)
-    await interaction.followup.send(f"Hello! {user}")
+    #Create and set up embed
+    embed_profile.title = f"{user.display_name}"
+    embed_profile.description = f"{user.name}"
+    embed_profile.add_field(name="User ID:", value=f"{user.id}")
+    embed_profile.set_image(url=f"{user.display_avatar.url}")
+    await interaction.followup.send(embed=embed_profile)
 
-    
+
 #Loop
 bot.run(DISCORD_TOKEN)
