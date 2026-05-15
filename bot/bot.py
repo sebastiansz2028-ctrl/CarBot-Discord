@@ -65,6 +65,7 @@ async def ping(interaction: discord.Interaction):
 @app_commands.describe(user="User's profile to fetch")
 async def profile_checker(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.defer(ephemeral=False)
+    fetch_user = await bot.fetch_user(user.id)
     #Initialize Embed w/ title and color for main profile
     embed_profile = discord.Embed(title=f"Profile of {user.display_name}", color=discord.Color.dark_orange())
     #Add to embed_profile
@@ -80,10 +81,11 @@ async def profile_checker(interaction: discord.Interaction, user: discord.Member
     embed_profile_banner = discord.Embed(title=f"{user.display_name}'s banner")
     #Checks if user has a custom banner and if not, does not send an image
     #Bots don't seem to work.
-    if user.display_banner is not None:
-        embed_profile_banner.set_image(url=f"{user.display_banner.url}")
+    if fetch_user.banner is not None:
+        embed_profile_banner.add_field(name="User Banner:", value="\u200b", inline=False)
+        embed_profile_banner.set_image(url=f"{fetch_user.banner.url}")
     else:
-        embed_profile_banner.add_field(name="User does not have a banner", value="", inline=False)
+        embed_profile_banner.add_field(name="User does not have a banner", value="\u200b", inline=False)
     await interaction.followup.send(embed=embed_profile_banner, ephemeral=True)
 
 @bot.tree.command(name="printer", description="Bot repeats whatever you input!")
@@ -92,8 +94,7 @@ async def printer(interaction: discord.Interaction, msg: str):
 
 @bot.tree.command(name="help", description="Shows commands.")
 async def help_cmd(interaction: discord.Interaction):
-    embed_help_cmd = discord.Embed(title="Help", color=discord.Color.purple())
-    embed_help_cmd.description("Commands:")
+    embed_help_cmd = discord.Embed(title="Help", color=discord.Color.purple(), description="Commands:")
     embed_help_cmd.add_field(name="Profile", value="Check some basic info about someones profile!")
     embed_help_cmd.add_field(name="Printer", value="Prints message you input!", inline=False)
     embed_help_cmd.add_field(name="Ping", value="Shows bot latency.", inline=False)
