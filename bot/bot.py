@@ -1,13 +1,12 @@
 #Imports
 import os
-from os import name
-from urllib import response
-
+import datetime
 import discord
 import dotenv
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
+from datetime import timedelta, datetime
 load_dotenv()
 
 
@@ -15,18 +14,21 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.all()
 intents.message_content = True
-signature_print = "[CarBot] "
+
+#Functions
+def signature_print():
+    return datetime.now().strftime('[%Y-%m-%d %H:%M:%S]') + " [CarBot] "
 
 #Bot Startup
 class CarBot(commands.Bot):
     async def on_ready(self):
-        print(signature_print + f'Logged on as {self.user}!')
+        print(signature_print() + f'Logged on as {self.user}!')
         await self.tree.sync()
-        print(signature_print + 'Synced Commands Globally!')
+        print(signature_print() + 'Synced Commands Globally!')
         await self.tree.sync(guild=discord.Object(id=1504288510650093570))
-        print(signature_print + 'Synced Commands in Home Server!')
+        print(signature_print() + 'Synced Commands in Home Server!')
         await bot.change_presence(activity=discord.Game(name="In Development"))
-        print(signature_print + f"{bot.user.name} presence set!")
+        print(signature_print() + f"{bot.user.name} presence set!")
 
 
 bot = CarBot(command_prefix='CB!', intents=intents)
@@ -35,7 +37,7 @@ bot = CarBot(command_prefix='CB!', intents=intents)
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error):
     err_msg = ""
-    print(signature_print + f"Error: {str(error)}")
+    print(signature_print() + f"Error: {str(error)}")
     if isinstance(error, app_commands.CommandInvokeError):
         error = error.original
         err_msg = "An error has occurred, please try again."
